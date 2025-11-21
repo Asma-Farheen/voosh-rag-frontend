@@ -6,10 +6,14 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+
 COPY . .
 
 # Create the optimized production build
-RUN npm run build
+# Use npx to bypass local permission issues with node_modules/.bin/vite
+RUN npx vite build
 
 # --- Stage 2: Serve the application with Nginx ---
 FROM nginx:stable-alpine AS production
